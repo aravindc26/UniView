@@ -11,8 +11,9 @@ public class UnipenReader {
 	private ArrayList<PenPoint> points;
 	
 	
-	ArrayList<PenPoint> readPointsFromFile(File f)	{
+	public static ArrayList<PenPoint> readPointsFromFile(File f)	{
 		BufferedReader br = null;
+		ArrayList<PenPoint> points;
 		points = new ArrayList<PenPoint>();
 		try	{
 			String sCurrentLine;

@@ -1,5 +1,9 @@
 package com.aravindc.UniView.unipen;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -9,6 +13,7 @@ public class PenUtils {
 	public static final String TOP_RIGHT = "TOP_RIGHT";
 	public static final String BOTTOM_LEFT = "BOTTOM_LEFT";
 	public static final String BOTTOM_RIGHT = "BOTTOM_RIGHT";
+	
 	public static Hashtable<String,PenPoint> getBoundingBox(ArrayList<PenPoint> points){
 		Hashtable<String, PenPoint> hash = new Hashtable<String,PenPoint>();
 		
@@ -43,5 +48,48 @@ public class PenUtils {
 		hash.put(BOTTOM_RIGHT, br);
 		
 		return hash;
+	}
+	public static ArrayList<PenPoint> readPointsFromFile(File f)	{
+		System.out.println("readPintsFromFile()");
+		BufferedReader br = null;
+		ArrayList<PenPoint> points;
+		points = new ArrayList<PenPoint>();
+		try	{
+			String sCurrentLine;
+			br = new BufferedReader(new FileReader(f));
+			boolean flagForPenState = false;
+			while((sCurrentLine = br.readLine()) != null){
+				//System.out.println(sCurrentLine + flagForPenState);
+				if(flagForPenState){
+					if(sCurrentLine.equals(".PEN_UP")){
+						flagForPenState = false;
+					}
+					PenPoint p = new PenPoint();
+					String splitted[] = sCurrentLine.split(" ");
+					p.setX(Integer.parseInt(splitted[0]));
+					p.setY(Integer.parseInt(splitted[1]));
+					System.out.println(p+ " " + flagForPenState);
+					points.add(p);
+				}
+				else if(sCurrentLine.equals(".PEN_DOWN")){
+					flagForPenState = true;
+				}
+				else continue;
+			}
+			System.out.println("Finished Reading");
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				if (br != null)br.close();
+		} 
+			catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		System.out.println("finished readPintsFromFile()");
+		return points;
 	}
 }
