@@ -7,7 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
-
+/*
+ * contains methods for reading points from a Unipen file and getting 
+ * the bounding box of the points.
+ * 
+ */
 public class PenUtils {
 	public static final String TOP_LEFT = "TOP_LEFT";
 	public static final String TOP_RIGHT = "TOP_RIGHT";
@@ -63,6 +67,7 @@ public class PenUtils {
 				if(flagForPenState){
 					if(sCurrentLine.equals(".PEN_UP")){
 						flagForPenState = false;
+						continue;
 					}
 					PenPoint p = new PenPoint();
 					String splitted[] = sCurrentLine.split(" ");
@@ -71,24 +76,23 @@ public class PenUtils {
 					System.out.println(p+ " " + flagForPenState);
 					points.add(p);
 				}
-				else if(sCurrentLine.equals(".PEN_DOWN")){
+				if(sCurrentLine.equals(".PEN_DOWN")){
 					flagForPenState = true;
-				}
-				else continue;
+				} 
 			}
 			System.out.println("Finished Reading");
 		}
 		catch(IOException e){
 			e.printStackTrace();
 		}
-		finally {
+		/*finally {
 			try {
 				if (br != null)br.close();
 		} 
 			catch (IOException ex) {
 				ex.printStackTrace();
 			}
-		}
+		}*/
 		System.out.println("finished readPintsFromFile()");
 		return points;
 	}

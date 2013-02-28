@@ -9,6 +9,7 @@ package com.aravindc.UniView.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -28,7 +29,9 @@ import javax.swing.GroupLayout;
 
 /**
  *
- * @author  __USER__
+ * @author  Aravind Chintalapalli<aravindc26@gmail.com>
+ * all rights reserved.
+ * 
  */
 public class View extends javax.swing.JFrame {
 
@@ -37,6 +40,7 @@ public class View extends javax.swing.JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Hashtable<String, PenPoint> boundingBox;
+	private ArrayList<PenPoint> points;
 	/** Creates new form View */
 	public View() {
 		getContentPane().setBackground(Color.GRAY);
@@ -157,7 +161,7 @@ public class View extends javax.swing.JFrame {
 		protected Hashtable<String, PenPoint> doInBackground() throws Exception {
 			System.out.println("doInBackground()");
 			File unipenFile = fileChooser.getSelectedFile();
-			ArrayList<PenPoint> points = PenUtils.readPointsFromFile(unipenFile);
+			points = PenUtils.readPointsFromFile(unipenFile);
 			boundingBox = PenUtils.getBoundingBox(points);
 			System.out.println(PenUtils.TOP_LEFT + boundingBox.get(PenUtils.TOP_LEFT));
 			jPanel1.flag = true;
@@ -167,7 +171,6 @@ public class View extends javax.swing.JFrame {
 		
 		@Override
 		protected void done() {
-			// TODO Auto-generated method stub
 			super.done();
 			
 		}
@@ -183,18 +186,58 @@ public class View extends javax.swing.JFrame {
 			super.paintComponent(g);
 			if(flag){
 				System.out.println("entered paint component");
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.setColor(Color.BLUE);
-			g2d.setRenderingHint(
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setColor(Color.BLUE);
+				g2d.setRenderingHint(
 					RenderingHints.KEY_ANTIALIASING, 
 					RenderingHints.VALUE_ANTIALIAS_ON);
-			g2d.setStroke(new BasicStroke(8,
+				g2d.setStroke(new BasicStroke(3,
 			            BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-			g.drawRoundRect(boundingBox.get(PenUtils.TOP_LEFT).getX(),boundingBox.get(PenUtils.TOP_LEFT).getY() , 
-					(boundingBox.get(PenUtils.BOTTOM_RIGHT).getX())-(boundingBox.get(PenUtils.TOP_LEFT).getX()), 
-					(boundingBox.get(PenUtils.BOTTOM_RIGHT).getY())-(boundingBox.get(PenUtils.TOP_LEFT).getY()), 0, 0);
-			}
+				PenPoint topLeft, topRight, bottomLeft, bottomRight;
+				topLeft = boundingBox.get(PenUtils.TOP_LEFT);
+				topRight = boundingBox.get(PenUtils.TOP_RIGHT);
+				bottomLeft = boundingBox.get(PenUtils.BOTTOM_LEFT);
+				bottomRight = boundingBox.get(PenUtils.BOTTOM_RIGHT);
+				
+				PenPoint tl, tr, bl, br;
+				tl = new PenPoint();
+				tl.setXY(topLeft.getX()-topLeft.getX(),topLeft.getY()-topLeft.getY());
+				tr = new PenPoint();
+				tr.setXY(topRight.getX()-topLeft.getX(), topRight.getY()-topLeft.getY());
+				bl = new PenPoint();
+				bl.setXY(bottomLeft.getX()-topLeft.getX(), bottomLeft.getY()-topLeft.getY());
+				br = new PenPoint();
+				br.setXY(bottomRight.getX()-topLeft.getX(), bottomLeft.getY()-topLeft.getY());
+				int xBig, xLow, yBig, yLow;
+		
+				xBig = br.getX();
+				xLow = tl.getX();
+				yBig = br.getY();
+				yLow = tl.getY();
 			
+				int xLoNew = 0;
+				int xHiNew = this.getWidth();
+				int yLoNew = 0;
+				int yHiNew = this.getHeight();
+			
+				g.drawRoundRect(convertToNewCord(tl.getX(), xLow, xBig, xLoNew + 10, xHiNew-10), convertToNewCord(tl.getY(), yLow, yBig, yLoNew+10, yHiNew-10), 
+						convertToNewCord(br.getX(), xLow, xBig, xLoNew+10, xHiNew-10)-convertToNewCord(tl.getX(), xLow, xBig, xLoNew+10, xHiNew-10), 
+						convertToNewCord(br.getY(), yLow, yBig, yLoNew+10, yHiNew-10)-convertToNewCord(tl.getY(), yLow, yBig, yLoNew+10, yHiNew-10), 0, 0);
+			
+				Iterator<PenPoint> it = points.iterator();
+				while(it.hasNext()){
+					PenPoint p = it.next();
+					int x = convertToNewCord(p.getX(), xLow, xBig, xLoNew + 10, xHiNew - 10);
+					int y = convertToNewCord(p.getY(), yLow, yBig, yLoNew + 10, yHiNew - 10);
+					System.out.println("("+p.getX()+","+p.getY()+")");
+					g.drawLine(x, y, x, y);
+				}
+			}		
 		}
+			
+			private int convertToNewCord(int xOld, int xLoOld, int xHiOld, int xLoNew, int xHiNew){
+				int xNew = (xOld-xLoOld) / (xHiOld-xLoOld) * (xHiNew-xLoNew) + xLoNew;
+				return xNew;
+			}	
 	}
 }
