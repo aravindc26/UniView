@@ -21,6 +21,15 @@ public class Normalizer {
 		this.original = original;
 	}
 	
+	public static ArrayList<PenPoint> cloneList(ArrayList<PenPoint> points) {
+		ArrayList<PenPoint> x = new ArrayList<PenPoint>(points.size());
+		for(PenPoint p : points){
+			x.add(new PenPoint(p));
+		}
+		return x;
+		
+	}
+	
 	public ArrayList<PenPoint> normalize(){
 		normalized = null;
 		float aN = W/H;
@@ -31,7 +40,7 @@ public class Normalizer {
 		 * points to normalized points.
 		 */
 		if(aN == aO)	{
-			// TODO copy the entire stroke group to the normalized stroke group.
+			normalized = cloneList(original);
 		}
 		
 		else if(aN < aO)	{
@@ -40,12 +49,25 @@ public class Normalizer {
 			 *   stroke group become vertically centered and this rectangle spans the 
 			 *   whole width of normalized stroke group
 			 */
+			float r = (H - h * (W / w)) / 2;
+			if(w == W) {
+				
+			}
+			else if(w < W) {
+				
+			}
+			else {
+				
+			}
 		}
 		else {
 			/*
-			 *  TODO Shrink original stroke group  to fill horizontally  normalized
-			 *  stroke group. 
+			 *  TODO  rescale original stroke group to get normalizedImage such that 
+			 *  the minimum bounding rectangle of all connected components in 
+			 *  normalized stroke group become horizontally centered and this 
+			 *  rectangle spans the whole height of normalized stroke group.
 			 */
+			
 		}
 		return normalized;
 	}

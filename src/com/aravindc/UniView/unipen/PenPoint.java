@@ -4,6 +4,14 @@ public class PenPoint{
 	private int x;
 	private int y;
 	
+	public PenPoint(PenPoint p) {
+		x = p.x;
+		y = p.y;
+	}
+	
+	public PenPoint(){
+		
+	}
 	
 	public void setXY(int x, int y){
 		this.x = x;
