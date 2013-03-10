@@ -12,6 +12,7 @@ public class TraceGroup {
 	public TraceGroup(){
 		this.xScaleFactor = 1;
 		this.yScaleFactor = 1;
+		this.traceList = new ArrayList<Trace>();
 	}
 	
 	public TraceGroup(TraceGroup tg){
@@ -125,5 +126,13 @@ public class TraceGroup {
 			outTraceList.add(new Trace(pointlist));
 		}
 		setTraceList(outTraceList);
+	}
+	
+	public int getNumPoints(){
+		int num = 0;
+		for(Trace t : traceList){
+			num += t.getTracePoints().size();
+		}
+		return num ;
 	}
 }

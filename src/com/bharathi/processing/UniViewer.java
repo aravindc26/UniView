@@ -5,6 +5,7 @@ import com.bharathi.commons.BoundingBox;
 import com.bharathi.commons.PointXY;
 import com.bharathi.commons.Trace;
 import com.bharathi.commons.TraceGroup;
+import com.bharathi.preprocess.PrepocessorUtil;
 import com.bharathi.utils.PenFileReader;
 
 import processing.core.*;
@@ -61,6 +62,9 @@ public class UniViewer extends PApplet {
 
 	public void fileSelected(File file){
 		 tg = PenFileReader.readTraceGroupFromFile(file);
+		 //System.out.println("number of points before preprocessing " + tg.getNumPoints());
+		 tg = PrepocessorUtil.removeDuplicatePoints(tg);
+		 //System.out.println("number of points after preprocessing " + tg.getNumPoints());
 		 resizeFrameForCharDisplay();
 		 ready = true;
 	}
