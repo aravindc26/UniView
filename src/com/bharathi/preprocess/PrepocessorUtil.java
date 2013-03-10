@@ -10,7 +10,6 @@ public class PrepocessorUtil {
 	
 	public static TraceGroup removeDuplicatePoints(TraceGroup inTraceGroup){
 		TraceGroup outTraceGroup = new TraceGroup();
-		ArrayList<Trace> traceList = new  ArrayList<Trace>();
 		ArrayList<PointXY> pointList;
 		int numTrace = inTraceGroup.getNumTraces();
 		for(int traceIndex = 0; traceIndex < numTrace; ++traceIndex){
@@ -28,6 +27,40 @@ public class PrepocessorUtil {
 			outTraceGroup.addTrace(new Trace(pointList));
 		}
 		return outTraceGroup ;
+	}
+	
+	public static TraceGroup smoothenTraceGroup(TraceGroup inTraceGroup, int smoothFilterLength){
+		TraceGroup outTraceGroup = new TraceGroup();
+		float sumX, sumY;
+		for(Trace t : inTraceGroup.getTraceList()){
+			int numPoints = t.getTracePoints().size();
+			ArrayList<PointXY> pointList = new ArrayList<PointXY>();
+			for(int pointIndex = 0; pointIndex < numPoints; ++ pointIndex){	
+				sumX = sumY = 0;
+				for(int loopIndex = 0; loopIndex < smoothFilterLength; ++loopIndex){
+					int actualIndex = (pointIndex-loopIndex);
+
+					//checking for bounding conditions
+					if (actualIndex <0 )
+					{
+						actualIndex = 0;
+					}
+					else if (actualIndex >= numPoints )
+					{
+						actualIndex = numPoints -1;
+					}
+
+					//accumulating values
+					sumX +=  t.getPointAt(actualIndex).getX();
+					sumY +=  t.getPointAt(actualIndex).getY();
+				}
+				sumX /= (float) smoothFilterLength;
+				sumY /= (float) smoothFilterLength;
+				pointList.add(new PointXY(sumX, sumY));
+			}
+			outTraceGroup.addTrace(new Trace(pointList));
+		}
+		return outTraceGroup;
 	}
 
 }

@@ -62,9 +62,14 @@ public class UniViewer extends PApplet {
 
 	public void fileSelected(File file){
 		 tg = PenFileReader.readTraceGroupFromFile(file);
-		 //System.out.println("number of points before preprocessing " + tg.getNumPoints());
+		 System.out.println("number of points before preprocessing " + tg.getNumPoints());
+		 System.out.println("number of traces before preprocessing " + tg.getNumTraces());
 		 tg = PrepocessorUtil.removeDuplicatePoints(tg);
-		 //System.out.println("number of points after preprocessing " + tg.getNumPoints());
+		 System.out.println("number of points after removing duplication " + tg.getNumPoints());
+		 System.out.println("number of traces after removing duplication " + tg.getNumTraces());
+		 tg = PrepocessorUtil.smoothenTraceGroup(tg, 10);
+		 System.out.println("number of points after smoothing " + tg.getNumPoints());
+		 System.out.println("number of traces after smoothing " + tg.getNumTraces());
 		 resizeFrameForCharDisplay();
 		 ready = true;
 	}
