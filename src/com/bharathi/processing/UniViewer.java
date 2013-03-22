@@ -21,7 +21,7 @@ public class UniViewer extends PApplet {
 	 TraceGroup tg;
 	 int count = 0;
 	public void setup(){
-		 size(50, 50);
+		 size(500, 500);
 		 stroke(255, 0, 0);
 		 
 		 strokeWeight(3);
@@ -41,6 +41,8 @@ public class UniViewer extends PApplet {
 			}
 			else
 				++count;
+			rect(tg.getBoundingBox().xMin, tg.getBoundingBox().yMin, 
+					tg.getBoundingBox().xMax - tg.getBoundingBox().xMin, tg.getBoundingBox().yMax - tg.getBoundingBox().yMin);
 			for(Trace t : tg.getTraceList())
 				for(PointXY p : t.getTracePoints()){
 					//System.out.println(p.getX() + " " + p.getY());
@@ -70,7 +72,9 @@ public class UniViewer extends PApplet {
 		 tg = PrepocessorUtil.smoothenTraceGroup(tg, 10);
 		 System.out.println("number of points after smoothing " + tg.getNumPoints());
 		 System.out.println("number of traces after smoothing " + tg.getNumTraces());
-		 resizeFrameForCharDisplay();
+		 //resizeFrameForCharDisplay();
+		 tg = PrepocessorUtil.normalizeAndPreserveAspectRatio(tg, 500, 500);
+			System.out.println("Bounding box after normalizing" + tg.getBoundingBox());
 		 ready = true;
 	}
 	

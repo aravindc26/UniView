@@ -2,6 +2,7 @@ package com.bharathi.preprocess;
 
 import java.util.ArrayList;
 
+import com.bharathi.commons.BoundingBox;
 import com.bharathi.commons.PointXY;
 import com.bharathi.commons.Trace;
 import com.bharathi.commons.TraceGroup;
@@ -61,6 +62,51 @@ public class PrepocessorUtil {
 			outTraceGroup.addTrace(new Trace(pointList));
 		}
 		return outTraceGroup;
+	}
+	
+	public static TraceGroup normalizeAndPreserveAspectRatio(TraceGroup inTraceGroup, float width, float height){
+		TraceGroup outTraceGroup = new TraceGroup();
+		BoundingBox box = inTraceGroup.getBoundingBox();
+		float w = box.xMax - box.xMin;
+		float h = box.yMax - box.yMin;
+		float newWidth;
+		float newHeight;
+		float wRatio;
+		float hRatio;
+		float offsetX = 0f;
+		float offsetY = 0f;
+		if(w >= h){
+			wRatio = width / w;
+			hRatio = wRatio;
+		}
+		else {
+			hRatio = height / h;
+			wRatio = hRatio;
+		}
+		newWidth = w * wRatio;
+		newHeight = h * hRatio;
+		if(newWidth >= newHeight){
+			offsetY = (height - newHeight) / 2;
+		}
+		else{
+			offsetX = (width - newWidth) / 2;
+		}
+		for(Trace t : inTraceGroup.getTraceList()){
+			ArrayList<PointXY> outPoints = new ArrayList<PointXY>();
+			for(PointXY p : t.getTracePoints()){
+				outPoints.add(new PointXY(
+						map(p.getX(), box.xMin, box.xMax, 0, newWidth), 
+						map(p.getY(), box.yMin, box.yMax, 0, newHeight)));
+			}
+			outTraceGroup.addTrace(new Trace(outPoints));
+		}
+		outTraceGroup.translateTo(offsetX, offsetY);
+		return outTraceGroup ;
+	}
+	public static final float map(float value, float start1, float stop1,
+            float start2, float stop2) {
+		return start2 + (stop2 - start2) * 
+				((value - start1) / (stop1 - start1));
 	}
 
 }
